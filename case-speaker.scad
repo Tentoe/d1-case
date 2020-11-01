@@ -7,21 +7,23 @@ $fs = 0.25;
 small_number = 1 / 1e308;
 
 speaker_d = 57;
-wall = 0.8;
+wall = 1.2;
 ledge = 2;
-ledge_height = 45;
+hole = 2;
+ledge_height = 40;
 ledge_thickness = 0.8;
 top_height = 2.5 + 4;
-height = ledge_height + top_height;
+height = ledge_height + top_height ;
 mount_offset = sqrt(pow(speaker_d / 2, 2) - pow(outer[0] / 2, 2));
 mount_translate = [ 0, outer[1] / 2 - mount_offset - wall , 0 ];
+
 
 module
 d1_case()
 {
     difference()
     {
-        translate([ 0, 0, height / 2 ]) cylinder(
+        translate([ 0, 0, (height - wall) / 2 ]) cylinder(
             r = speaker_d / 2 + wall, h = height + wall, center = true);
 
         translate([ 0, 0, (height + wall) / 2 ])
@@ -68,16 +70,22 @@ difference()
         difference()
         {
             d1_case();
+
             translate([
                 mount_translate[0],
                 mount_translate[1],
                 mount_translate[2] -
                 wall
             ]) d1_mini_access();
+
+            for (i = [ [ 90, 0, 0 ], [ 0, 90, 0 ] ])
+                translate([0,0, height - hole/2 - hole /2 ])rotate(i) cylinder(r = hole / 2, h = speaker_d + 2 * wall , center = true);
         }
 
         translate([ 0, 0, ledge_height ]) ledge();
         translate(mount_translate) d1_mini_holder();
     }
-    //translate([0, 0, 62]) cube(size=[100, 100, 100], center=true);
+    //translate([0, 0, -15]) cube(size=[100, 100, 100], center=true);
+    translate([0, 0, 60]) cube(size=[100, 100, 100], center=true);
 }
+
