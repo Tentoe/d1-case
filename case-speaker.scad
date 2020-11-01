@@ -1,69 +1,83 @@
 
+include <mount.scad>
+
 $fa = 4;
 $fs = 0.25;
 
-d1_mini_dimensions = [ 26, 34, 8, 2 ]; // [x, y, z ,corner]
+small_number = 1 / 1e308;
 
-module d1_mini(w = d1_mini_dimensions[0],
-               d = d1_mini_dimensions[1],
-               h = d1_mini_dimensions[2],
-               corner = d1_mini_dimensions[3])
+speaker_d = 57;
+wall = 0.8;
+ledge = 2;
+ledge_height = 45;
+ledge_thickness = 0.8;
+top_height = 2.5 + 4;
+height = ledge_height + top_height;
+mount_offset = sqrt(pow(speaker_d / 2, 2) - pow(outer[0] / 2, 2));
+mount_translate = [ 0, outer[1] / 2 - mount_offset - wall , 0 ];
+
+module
+d1_case()
 {
-    translate([ 0, 0, h / 2 ]) difference()
-    {
-        cube(size = [ w, d, h ], center = true);
-
-        corner_heigt = sqrt(corner);
-        translate([ w / 2, d / 2, 0 ]) rotate(a = [ 0, 0, 45 ]) cube(
-            size = [ 2 * corner_heigt, 2 * corner_heigt, h ], center = true);
-        translate([ -w / 2, d / 2, 0 ]) rotate(a = [ 0, 0, 45 ]) cube(
-            size = [ 2 * corner_heigt, 2 * corner_heigt, h ], center = true);
-    }
-}
-
-module d1_mini_holder(bottom = 3,
-                      top = 1,
-                      outer_edge = 1.5,
-                      inner_edge = 1,
-                      holes = 2,
-                      overhang = 0.5,
-                      wall_h = 3)
-{
-    h = bottom + top;
-    outer = [
-        d1_mini_dimensions[0] + outer_edge * 2,
-        d1_mini_dimensions[1] + outer_edge * 2,
-        h
-    ];
-    corner = d1_mini_dimensions[3] / 2;
-
     difference()
     {
-        translate([ 0, 0, h / 2 ]) cube(size = outer, center = true);
-        translate([ 0, 0, h - top ]) d1_mini();
-        d1_mini(w = d1_mini_dimensions[0] - 2 * inner_edge,
-                d = d1_mini_dimensions[1] - 2 * inner_edge);
-        hole_location = [
-            d1_mini_dimensions[0] / 2 - corner + sqrt(holes) / 2,
-            d1_mini_dimensions[1] / 2 - corner + sqrt(holes) / 2,
-            h / 2
-        ];
-        translate(hole_location) cylinder(r = holes / 2, h = h, center = true);
-        translate([ -hole_location[0], hole_location[1], hole_location[2] ])
-            cylinder(r = holes / 2, h = h, center = true);
+        translate([ 0, 0, height / 2 ]) cylinder(
+            r = speaker_d / 2 + wall, h = height + wall, center = true);
+
+        translate([ 0, 0, (height + wall) / 2 ])
+            cylinder(r = speaker_d / 2, h = height, center = true);
     }
-    wall_size = [ outer[0], outer_edge + overhang, wall_h ];
-    difference()
+    intersection()
     {
-        translate(
-            [ 0, -outer[1] / 2 + wall_size[1] / 2, wall_h / 2 + outer[2] ])
-            cube(size = wall_size, center = true);
-        port_size = [ 7.5, wall_size[1], 2.85 ];
+        translate([ 0, 0, height / 2 ]) cylinder(
+            r = speaker_d / 2 + wall, h = height + wall, center = true);
         translate([
-            0,
-            -outer[1] / 2 + wall_size[1] / 2,
-            port_size[2] / 2 + outer[2]
-        ]) cube(size = port_size, center = true);
+            mount_translate[0],
+            mount_translate[1],
+            mount_translate[2] -
+            wall
+        ]) d1_mini_access(wall = wall);
     }
 }
-d1_mini_holder(); // usb port 7.5x 2.85  2 mm max wall wall// stifthöhe 11.2
+
+module ledge(r = speaker_d / 2, thickness = ledge_thickness)
+{
+
+    angle = 60;
+
+    translate([ 0, 0, thickness / 2 ]) difference()
+    {
+        cylinder(r = r, h = thickness, center = true);
+        cylinder(r = r - ledge, h = thickness, center = true);
+    }
+
+    thickness2 = thickness * tan(angle);
+    translate([ 0, 0, -thickness2 + thickness ]) difference()
+    {
+        cylinder(r = r + small_number, h = thickness2, center = true);
+        cylinder(r1 = r + small_number,
+                 r2 = r - ledge,
+                 h = thickness2,
+                 center = true);
+    }
+}
+difference()
+{
+    union()
+    {
+        difference()
+        {
+            d1_case();
+            translate([
+                mount_translate[0],
+                mount_translate[1],
+                mount_translate[2] -
+                wall
+            ]) d1_mini_access();
+        }
+
+        translate([ 0, 0, ledge_height ]) ledge();
+        translate(mount_translate) d1_mini_holder();
+    }
+    //translate([0, 0, 62]) cube(size=[100, 100, 100], center=true);
+}
