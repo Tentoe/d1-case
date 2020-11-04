@@ -37,7 +37,7 @@ outer = [
     top
 ];
 holes = 2;
-wall_h = 3;
+wall_h = 3.25;
 overhang = 0.5;
 wall_size = [ outer[0], outer_edge + overhang, wall_h ];
 port_size = [ 9, inner_edge + outer_edge, 4 ];
@@ -89,16 +89,18 @@ d1_mini_holder()
             ]) cube(size = i[0], center = true);
     }
 }
-access_size = [ outer[0] + 10, 30, outer[2] + wall_size[2] ];
+access_size = [ 30, outer[0] + 20, outer[2] + wall_size[2] ];
 
 module d1_mini_access(wall = 0)
-{   
-    
-    access_size_local = [for(x=access_size) x + wall];
-    translate([ 0, -access_size_local[1] / 2 - outer[1] / 2, access_size_local[2] / 2 ])
-        cube(size = access_size_local, center = true);
+{
+    angle = 60;
+    h = wall / cos(angle);
+    translate([ 0, -(access_size[0]) / 2 - outer[1] / 2, 0 ])
+        rotate([ 0, 0, 90 ])
+            ramp(base = [ access_size[0], access_size[1] + 2 * wall ],
+                 h1 = (access_size[1] * tan(angle)) + h,
+                 h2 = access_size[2] + h);
 }
-
 
 
 

@@ -8,11 +8,10 @@ ledge = 2;
 hole = 2;
 ledge_height = 40;
 ledge_thickness = 0.8;
-top_height = 2.5 ;
-height = ledge_height + top_height ;
+top_height = 2.5;
+height = ledge_height + top_height;
 mount_offset = sqrt(pow(speaker_d / 2, 2) - pow(outer[0] / 2, 2));
-mount_translate = [ 0, outer[1] / 2 - mount_offset - wall , 0 ];
-
+mount_translate = [ 0, outer[1] / 2 - mount_offset - wall, 0 ];
 
 module
 d1_case()
