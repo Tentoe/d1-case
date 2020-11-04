@@ -5,7 +5,7 @@ $fs = 0.25;
 
 small_number = 1 / 1e308;
 
-lid_thickness = 3 * 0.175;
+lid_thickness = 4 * 0.175;
 lid_h = 4 + lid_thickness;
 lid_ring = 2.5;
 lid_gap = 0.5;
