@@ -40,21 +40,17 @@ d1_case()
 module ledge(r = speaker_d / 2, thickness = ledge_thickness)
 {
 
-    angle = 60;
-
     translate([ 0, 0, thickness / 2 ]) difference()
     {
         cylinder(r = r, h = thickness, center = true);
         cylinder(r = r - ledge, h = thickness, center = true);
     }
 
+    angle = 70;
     thickness2 = thickness * tan(angle);
-    translate([ 0, 0, -thickness2 + thickness ]) difference()
+    translate([ 0, 0, -thickness2 / 2 ]) difference()
     {
-        cylinder(r = r + small_number, h = thickness2, center = true);
-        cylinder(r1 = r + small_number,
-                 r2 = r - ledge,
-                 h = thickness2,
-                 center = true);
+        cylinder(r = r, h = thickness2, center = true);
+        cylinder(r1 = r, r2 = r - ledge, h = thickness2, center = true);
     }
 }
