@@ -93,7 +93,7 @@ access_size = [ 30, outer[0] + 20, outer[2] + wall_size[2] ];
 
 module d1_mini_access(wall = 0)
 {
-    angle = 60;
+    angle = 45;
     h = wall / cos(angle);
     translate([ 0, -(access_size[0]) / 2 - outer[1] / 2, 0 ])
         rotate([ 0, 0, 90 ])
